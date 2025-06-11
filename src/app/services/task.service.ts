@@ -16,7 +16,16 @@ export class TaskService {
   }
 
   async getTasks(): Promise<TaskInterface[]> {
-    return (await this._storage?.get(this.TASK_KEY)) || [];
+    const tasks: TaskInterface[] = (await this._storage?.get(this.TASK_KEY)) || [];
+    return tasks.sort((a, b) => {
+      const dateA = new Date(a.dueDate).getTime();
+      const dateB = new Date(b.dueDate).getTime();
+      if (dateA === dateB) {
+        const priorityMap = { high: 0, medium: 1, low: 2 } as const;
+        return priorityMap[a.priority] - priorityMap[b.priority];
+      }
+      return dateA - dateB;
+    });
   }
 
   async addTask(task: TaskInterface): Promise<void> {
@@ -37,5 +46,29 @@ export class TaskService {
   async deleteTask(id: number): Promise<void> {
     const tasks = (await this.getTasks()).filter(t => t.id !== id);
     await this._storage?.set(this.TASK_KEY, tasks);
+  }
+
+  async searchTasks(query: string): Promise<TaskInterface[]> {
+    const tasks = await this.getTasks();
+    if (!query) {
+      return tasks;
+    }
+    const lower = query.toLowerCase();
+    return tasks.filter(t =>
+      t.title.toLowerCase().includes(lower) ||
+      (t.description || '').toLowerCase().includes(lower)
+    );
+  }
+
+  async filterTasks(status: 'all' | 'completed' | 'pending', tags: string[] = []): Promise<TaskInterface[]> {
+    let tasks = await this.getTasks();
+    if (status !== 'all') {
+      const isCompleted = status === 'completed';
+      tasks = tasks.filter(t => t.completed === isCompleted);
+    }
+    if (tags.length) {
+      tasks = tasks.filter(t => tags.every(tag => t.tags.includes(tag)));
+    }
+    return tasks;
   }
 }
