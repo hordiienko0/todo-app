@@ -25,6 +25,29 @@
         placeholder="Введіть опис"
       ></ion-textarea>
     </ion-item>
+    <ion-item>
+      <ion-datetime
+        formControlName="dueDate"
+        presentation="date-time"
+        label="Крайній термін"
+        labelPlacement="floating"
+      ></ion-datetime>
+    </ion-item>
+    <ion-item>
+      <ion-segment formControlName="priority">
+        <ion-segment-button value="low">Низкий</ion-segment-button>
+        <ion-segment-button value="medium">Средний</ion-segment-button>
+        <ion-segment-button value="high">Высокий</ion-segment-button>
+      </ion-segment>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Теги</ion-label>
+      <ion-select formControlName="tags" multiple="true">
+        <ion-select-option value="work">work</ion-select-option>
+        <ion-select-option value="home">home</ion-select-option>
+        <ion-select-option value="urgent">urgent</ion-select-option>
+      </ion-select>
+    </ion-item>
     <ion-button expand="full" type="submit" [disabled]="taskForm.invalid">
       Зберегти
     </ion-button>
