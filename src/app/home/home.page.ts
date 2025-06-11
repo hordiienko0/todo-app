@@ -39,7 +39,13 @@ export class HomePage {
 
   private async loadTasks() {
     const all = await this.taskService.getTasks();
-    this.allTags = Array.from(new Set(all.flatMap(t => t.tags)));
+    this.allTags = Array.from(
+      new Set(
+        all.reduce((acc: string[], task: TaskInterface) => {
+          return acc.concat(task.tags);
+        }, [])
+    )
+);
     this.tasks = all;
   }
 
