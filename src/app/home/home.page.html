@@ -1,0 +1,34 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>ToDo List</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-list inset *ngIf="tasks.length">
+    <ion-item *ngFor="let task of tasks">
+      <ion-label>
+        <h2 [class.completed]="task.completed">{{ task.title }}</h2>
+        <p>{{ task.description }}</p>
+      </ion-label>
+      <ion-checkbox
+        slot="start"
+        [checked]="task.completed"
+        (ionChange)="toggleComplete(task)"
+      ></ion-checkbox>
+      <ion-button
+        fill="clear"
+        color="danger"
+        (click)="deleteTask(task.id)"
+      >
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="openTaskDetails()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
